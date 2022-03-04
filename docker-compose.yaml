@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo  
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: mongopwd
+    networks:
+      - rotten_potatoes_net  
+    volumes:
+      - rotten_potatoes_vol:/data/db
+    ports:
+      - 27017:27017
+  flask:
+    image: vianabcc/rotten-potatoes
+    build: 
+      dockerfile: ./Dockerfile
+      context: ./src
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_USERNAME: mongouser
+      MONGODB_PASSWORD: mongopwd
+      
+    networks:
+      - rotten_potatoes_net  
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongodb
+    
+networks:
+  rotten_potatoes_net:
+    driver: bridge    
+volumes:
+  rotten_potatoes_vol:
